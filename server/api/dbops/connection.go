@@ -2,16 +2,17 @@ package dbops
 
 import (
 	"database/sql"
-	"github.com/go-sql-driver/mysql"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
-var(
+var (
 	dbConn *sql.DB
-	err error
+	err    error
 )
 
 func init() {
-	dbConn, err := sql.Open("mysql", "root:Admin!23@tcp(localhost:3306)/video_server?charset=utf8")
+	dbConn, err = sql.Open("mysql", "root:Admin!23@tcp(localhost:3306)/video_server?charset=utf8")
 	if err != nil {
 		panic(err.Error())
 	}

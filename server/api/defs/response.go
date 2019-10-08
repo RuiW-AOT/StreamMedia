@@ -1,14 +1,13 @@
-package main
+package defs
 
-import(
-	"io"
+import (
 	"net/http"
 )
 
-func sendErrorResponse(w http.ResponserWriter) {
+func sendErrorResponse(w http.ResponseWriter) {
 
 }
 
-func sendNormalResponse(w http.ResponserWriter){
-	
+func sendNormalResponse(w http.ResponseWriter) {
+
 }

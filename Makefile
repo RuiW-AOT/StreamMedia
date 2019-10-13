@@ -5,3 +5,6 @@ BIN ?= $(BASE_DIR)/bin
 build-api-server:
 	cd $(BASE_DIR)/server/api &&  go build -o $(BIN)/api-server
 
+.PHONY: build-stream-server
+build-stream-server:
+	cd $(BASE_DIR)/server/stream &&  go build -o $(BIN)/stream-server

@@ -6,10 +6,6 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-const (
-	RateLimit = 2
-)
-
 type middleWareHandler struct {
 	router      *httprouter.Router
 	connLimiter *ConnectionLimiter
@@ -42,6 +38,6 @@ func RegisterHandlers() *httprouter.Router {
 
 func main() {
 	r := RegisterHandlers()
-	mh := NewMiddleWareHandler(r, RateLimit)
+	mh := NewMiddleWareHandler(r, RATE_LIMIT)
 	http.ListenAndServe(":9000", mh)
 }

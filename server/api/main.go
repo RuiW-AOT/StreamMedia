@@ -1,8 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
+	"strings"
 
+	"github.com/RuiW-AOT/StreamMedia/server/api/defs"
 	"github.com/julienschmidt/httprouter"
 )
 
@@ -16,9 +19,24 @@ func NewMiddleWareHandler(r *httprouter.Router) http.Handler {
 	return m
 }
 
+func skipSessionValidation(method, url string) bool {
+	fmt.Println(method, url)
+	if method == "POST" && strings.HasPrefix(url, "/user") {
+
+		return true
+	}
+
+	return false
+}
+
 func (m middleWareHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// check session
-	validateUserSession(r)
+
+	if !skipSessionValidation(r.Method, r.URL.Path) && !validateUserSession(r) {
+		sendErrorResponse(w, defs.ErrorNotAuthUser)
+		return
+	}
+
 	m.r.ServeHTTP(w, r)
 }
 

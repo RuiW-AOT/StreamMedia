@@ -67,11 +67,6 @@ func Login(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 }
 
 func GetUserInfo(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	if !validateUser(w, r) {
-		sendErrorResponse(w, defs.ErrorNotAuthUser)
-		return
-	}
-
 	uname := p.ByName("username")
 	u, err := dbops.GetUser(uname)
 	if err != nil {
@@ -88,11 +83,6 @@ func GetUserInfo(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 }
 
 func AddNewVideo(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	if !validateUser(w, r) {
-		sendErrorResponse(w, defs.ErrorNotAuthUser)
-		return
-	}
-
 	res, _ := ioutil.ReadAll(r.Body)
 	nvbody := &defs.NewVideo{}
 
@@ -116,10 +106,6 @@ func AddNewVideo(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 }
 
 func ListAllVideos(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	if !validateUser(w, r) {
-		sendErrorResponse(w, defs.ErrorNotAuthUser)
-		return
-	}
 	uname := p.ByName("username")
 	videos, err := dbops.ListVideoInfo(uname, 0, utils.GetCurrentTimestampSec())
 	if err != nil {
@@ -138,9 +124,6 @@ func ListAllVideos(w http.ResponseWriter, r *http.Request, p httprouter.Params) 
 }
 
 func DeleteVideo(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	if !validateUser(w, r) {
-		return
-	}
 
 	vid := p.ByName("vid-id")
 	err := dbops.DeleteVideoInfo(vid)
@@ -155,10 +138,6 @@ func DeleteVideo(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 }
 
 func PostComment(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	if !validateUser(w, r) {
-		return
-	}
-
 	reqBody, _ := ioutil.ReadAll(r.Body)
 
 	cbody := &defs.NewComment{}
@@ -178,10 +157,6 @@ func PostComment(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 }
 
 func ShowComments(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	if !validateUser(w, r) {
-		return
-	}
-
 	vid := p.ByName("vid-id")
 	cm, err := dbops.ListComments(vid, 0, utils.GetCurrentTimestampSec())
 	if err != nil {

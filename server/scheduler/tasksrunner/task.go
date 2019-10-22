@@ -3,18 +3,19 @@ package tasksrunner
 import (
 	"errors"
 	"log"
+	"os"
+	"sync"
 
 	"github.com/RuiW-AOT/StreamMedia/server/scheduler/dbops"
 )
 
 func deleteVideo(vid string) error {
-	err := os.Remove("./videos/"+vid)
-	if err != nil  && !os.IsNotExist(err){
+	err := os.Remove("./videos/" + vid)
+	if err != nil && !os.IsNotExist(err) {
 		return err
 	}
 	return nil
 }
-
 
 func VideoClearDispatcher(dc dataChan) error {
 	res, err := dbops.ReadVideoDeletionRecord(3)
@@ -31,8 +32,41 @@ func VideoClearDispatcher(dc dataChan) error {
 	}
 	return nil
 }
+func VideoClearExecutor(dc dataChan) error {
+	errMap := &sync.Map{}
+	var err error
 
-func VideoClearExecuter(dc dataChan) error {
+forloop:
+	for {
+		select {
+		case vid := <-dc:
+			go func(id interface{}) {
+				if err := deleteVideo(id.(string)); err != nil {
+					errMap.Store(id, err)
+					return
+				}
+				if err := dbops.DeleteVideoDeleteRecord(id.(string)); err != nil {
+					errMap.Store(id, err)
+					return
+				}
+			}(vid)
+		default:
+			break forloop
+		}
+	}
+
+	errMap.Range(func(k, v interface{}) bool {
+		err = v.(error)
+		if err != nil {
+			return false
+		}
+		return true
+	})
+
+	return err
+}
+
+/*func VideoClearExecuter(dc dataChan) error {
 	errmap := &sync.map{}
 	var err error
 	forloop:
@@ -44,22 +78,15 @@ func VideoClearExecuter(dc dataChan) error {
 						errMap.Store(id, err)
 						return
 					}
-					if err :=dbops.DeleteVideoDeleteRecord(id.(string)); err != nil {
+					if err := dbops.DeleteVideoDeleteRecord(id.(string)); err != nil {
 						errMap.Store(id, err)
 						return
 					}
 				}(vid)
-				default:
-					break forloop
+			default:
+				break forloop
 			}
 		}
-	errMap.Range(func(k, v interface{})bool{
-		err = v.(error)
-		if err != nil {
-			return false
-		}
-	})
+		return nil
 
-	return err
-
-}
+}*/

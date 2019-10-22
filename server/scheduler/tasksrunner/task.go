@@ -65,28 +65,3 @@ forloop:
 
 	return err
 }
-
-/*func VideoClearExecuter(dc dataChan) error {
-	errmap := &sync.map{}
-	var err error
-	forloop:
-		for {
-			select {
-			case vid := <- dc:
-				go func(id interfacr{}) {
-					if err := deleteVideo(id.(string)); err != nil {
-						errMap.Store(id, err)
-						return
-					}
-					if err := dbops.DeleteVideoDeleteRecord(id.(string)); err != nil {
-						errMap.Store(id, err)
-						return
-					}
-				}(vid)
-			default:
-				break forloop
-			}
-		}
-		return nil
-
-}*/
